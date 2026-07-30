@@ -25,3 +25,29 @@ dnf5 install -y tmux
 #### Example for enabling a System Unit File
 
 systemctl enable podman.socket
+
+### Driver Wi-Fi AIC8800D80
+
+echo "=== Instalando driver AIC8800D80 ==="
+
+dnf5 -y install kernel-devel kernel-headers gcc make git
+
+KVER=$(rpm -q --qf '%{version}-%{release}.%{arch}\n' kernel-core | head -n1)
+echo "Kernel da imagem: ${KVER}"
+
+git clone --depth 1 https://github.com/shenmintao/aic8800d80.git /tmp/aic8800
+
+cd /tmp/aic8800/drivers/aic8800
+make -C "/usr/lib/modules/${KVER}/build" M="$(pwd)" modules
+
+install -Dm644 aic8800_fdrv.ko "/usr/lib/modules/${KVER}/extra/aic8800_fdrv.ko"
+depmod -a "${KVER}"
+
+mkdir -p /usr/lib/firmware
+cp -r /tmp/aic8800/fw/aic8800* /usr/lib/firmware/
+
+install -Dm644 /tmp/aic8800/aic.rules /usr/lib/udev/rules.d/aic.rules
+
+rm -rf /tmp/aic8800
+
+echo "=== Driver AIC8800D80 instalado com sucesso ==="
