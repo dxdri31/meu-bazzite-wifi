@@ -40,8 +40,10 @@ git clone --depth 1 https://github.com/shenmintao/aic8800d80.git /tmp/aic8800
 cd /tmp/aic8800/drivers/aic8800
 make -C "/usr/lib/modules/${KVER}/build" M="$(pwd)" modules
 
-install -Dm644 aic8800_fdrv.ko "/usr/lib/modules/${KVER}/extra/aic8800_fdrv.ko"
+install -Dm644 aic8800_fdrv/aic8800_fdrv.ko "/usr/lib/modules/${KVER}/extra/aic8800_fdrv.ko"
 depmod -a "${KVER}"
+
+install -Dm644 aic_zlp_quirk/aic_zlp_quirk.ko "/usr/lib/modules/${KVER}/extra/aic_zlp_quirk.ko"
 
 mkdir -p /usr/lib/firmware
 cp -r /tmp/aic8800/fw/aic8800* /usr/lib/firmware/
